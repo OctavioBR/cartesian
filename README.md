@@ -1,4 +1,4 @@
-> An exercice from [tobym/cartesian](https://github.com/tobym/cartesian)
+> An exercise from [tobym/cartesian](https://github.com/tobym/cartesian)
 
 Cartesian API
 =============
