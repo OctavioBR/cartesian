@@ -1,3 +1,5 @@
+> An exercice from [tobym/cartesian](https://github.com/tobym/cartesian)
+
 Cartesian API
 =============
 
@@ -11,3 +13,18 @@ It must have an api route at `/api/points` that accepts a `GET` request with the
 The Manhattan distance is measured "block-wise", as the distance in blocks between any two points in the plane (e.g. 2 blocks down and 3 blocks over for a total of 5 blocks). It is defined as the sum of the horizontal and vertical distances between points on a grid. Formally, where `p1 = (x1, y1)` and `p2 = (x2, y2)`, `distance(p1,p2) = |x1-x2| + |y1-y2|`.
 
 On startup, the API server should read a list of points from `data/points.json`.
+
+# Solution
+Code purely with Go and it's standard library.
+
+### Build?
+`make build`
+
+### Run?
+`make run`
+
+> Notes: You can set `PORT` environment variable to define which port the server will listen to.
+
+## TODO
+- [ ] "make test", instead of "cd point & go test"
+- [ ] dockerize make run too
