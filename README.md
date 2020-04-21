@@ -15,10 +15,14 @@ The Manhattan distance is measured "block-wise", as the distance in blocks betwe
 On startup, the API server should read a list of points from `data/points.json`.
 
 # Solution
-Code purely with Go and it's standard library.
+Code purely with Go and it's standard library.  
+For each request, it iterates points from data "_O(n)_", and stores occurrences (_m_) whithin distance from search origin using sorted insert. Took advantage of [`sort.Search`](https://golang.org/pkg/sort/#Search) function which uses bynary search "_O(log m)_", achieving the end asymptotic complexity of _O(n log m)_.
+
+There may be other data sctructures that could better explore the cartesian coordinate system. Storing points from json file _sorted_, and enabling improved search from origin, limited by given distance.
+
 
 ### Build?
-`make build`
+`make build` → This will create a static binary file at `bin/cartesian`.
 
 ### Run?
 `make run`
@@ -27,4 +31,4 @@ Code purely with Go and it's standard library.
 
 ## TODO
 - [ ] "make test", instead of "cd point & go test"
-- [ ] dockerize make run too
+- [ ] dockerize "make run" too
