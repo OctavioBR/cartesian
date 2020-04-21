@@ -1,4 +1,4 @@
-package points
+package point
 
 import "testing"
 
@@ -12,7 +12,10 @@ func TestDistance(t *testing.T) {
 		{Point{-10, 0}, Point{10, 0}, 20},
 		{Point{10, 0}, Point{-10, 0}, 20},
 		{Point{0, 10}, Point{0, -10}, 20},
+		{Point{-1, -1}, Point{1, 1}, 4},
 		{Point{-1, 1}, Point{1, -1}, 4},
+		{Point{0, 0}, Point{0, 60}, 60},
+		{Point{1, 1}, Point{0, 60}, 60},
 	}
 
 	for _, c := range cases {
