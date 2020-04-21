@@ -1,20 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/OctavioBR/cartesian/points"
+	"github.com/OctavioBR/cartesian/point"
 	"github.com/OctavioBR/cartesian/utils"
 )
 
-var data []points.Point
+var data point.Points
 
 func main() {
-	data = points.FromJSON("data/points.json")
+	data.FromJSON("data/points.json")
 	log.Printf("Loaded %d points from data/points.json", len(data))
+	fmt.Println(data)
 
 	http.HandleFunc("/api/points", handler)
 
@@ -28,7 +30,41 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	refPoint, refDistance, err := validateInput(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var pds point.PointsDistance
+	for _, pt := range data {
+		distance := refPoint.Distance(pt)
+		if distance <= refDistance {
+			pds = pds.SortedInsert(point.PointDistance{pt, distance})
+		}
+	}
+
+	j, err := json.Marshal(pds)
+	if err != nil {
+		http.Error(w, "Failed to marshal result", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	if len(pds) == 0 {
+		w.Write([]byte("[]"))
+		return
+	}
+
+	w.Write(j)
+}
+
+func validateInput(r *http.Request) (point.Point, int, error) {
 	q := r.URL.Query()
+	var err error
+
 	params := map[string]int{
 		"x":        0,
 		"y":        0,
@@ -38,16 +74,16 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	for k := range params {
 		v := q.Get(k)
 		if v == "" {
-			http.Error(w, fmt.Sprintf("param %q is required", k), http.StatusBadRequest)
-			return
+			err = fmt.Errorf("param %q is required", k)
+			return point.Point{}, 0, err
 		}
 		vn, err := strconv.Atoi(v)
 		if err != nil {
-			http.Error(w, fmt.Sprintf("%q must be an integer, got %q", k, v), http.StatusBadRequest)
-			return
+			err = fmt.Errorf("%q must be an integer, got %q", k, v)
+			return point.Point{}, 0, err
 		}
 		params[k] = vn
 	}
 
-	fmt.Fprintf(w, "x=%v y=%v distance=%v", params["x"], params["y"], params["distance"])
+	return point.Point{params["x"], params["y"]}, params["distance"], nil
 }
