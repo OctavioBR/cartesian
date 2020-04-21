@@ -1,12 +1,13 @@
 package point
 
 type Point struct {
-	X, Y int
+	X int `json:"x"`
+	Y int `json:"y"`
 }
 
 type PointDistance struct {
 	Point
-	Distance int
+	Distance int `json:"-"`
 }
 
 func (p1 Point) Distance(p2 Point) int {
