@@ -16,11 +16,11 @@ var data point.Points
 func main() {
 	data.FromJSON("data/points.json")
 	log.Printf("Loaded %d points from data/points.json", len(data))
-	fmt.Println(data)
 
 	http.HandleFunc("/api/points", handler)
 
 	port := utils.Getenv("PORT", "8080")
+	log.Printf("Listening on port %q", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
@@ -61,6 +61,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+// validateInput inspects request ensuring that all required query paremeters were provided correctly
 func validateInput(r *http.Request) (point.Point, int, error) {
 	q := r.URL.Query()
 	var err error
